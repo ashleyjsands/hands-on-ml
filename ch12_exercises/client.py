@@ -6,6 +6,8 @@ from tensorflow.examples.tutorials.mnist import input_data
 parser = argparse.ArgumentParser(description="a tensorflow MNIST client.")
 parser.add_argument('server_host', type=str, help='the server host name and port')
 parser.add_argument('container_name', type=str, help='the name of the resource container to use', nargs='?', default='')
+parser.add_argument('learning_rate', type=float, help='the learning rate of the optimizer', nargs='?', default=0.1)
+parser.add_argument('batch_size', type=int, help='the size of the batches when applying batch gradient descent', nargs='?', default=100)
 args = parser.parse_args()
 
 mnist = input_data.read_data_sets("/tmp/data/")
@@ -45,7 +47,7 @@ with tf.container(args.container_name):
         loss = tf.reduce_mean(cross_entropy, name="loss")
 
     with tf.name_scope("training"):
-        optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
+        optimizer = tf.train.GradientDescentOptimizer(args.learning_rate)
         training_op = optimizer.minimize(loss)
 
     with tf.name_scope("eval"):
@@ -70,13 +72,14 @@ with tf.container(args.container_name):
     file_writer = tf.summary.FileWriter(log_dir, tf.get_default_graph())
 
 epochs = 10
-batch_size = 100
+batch_size = args.batch_size
 n_batches = int(np.ceil(mnist.train.num_examples // batch_size))
 
 early_stopping_check_frequency = n_batches // 10
 early_stopping_check_limit = n_batches * 2
 
 print("Connecting to %s to use '%s' container" % (args.server_host, args.container_name))
+print("Training with a learning rate of %s and a batch size of %s" % (args.learning_rate, args.batch_size))
 with tf.Session("grpc://" + args.server_host) as sess:
     sess.run(init)
     best_validation_acc = 0.0
