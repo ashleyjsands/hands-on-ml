@@ -1,3 +1,2 @@
 3. Change the client script to pass in some hyper parameters via command line.
-4. Change the client script to pass in the resouce container name.
 5. Use a validation set to measure performance.
