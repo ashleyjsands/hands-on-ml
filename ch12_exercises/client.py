@@ -1,16 +1,11 @@
+import argparse
 import tensorflow as tf
+
+parser = argparse.ArgumentParser(description="a tensorflow MNIST client.")
+parser.add_argument('server_host', type=str, help='the server host name and port')
+args = parser.parse_args()
 
 c = tf.constant("hello world")
 
-# Tell each server to use only (almost) a third of the GPUs memory so they can all fit in the same GPU. 
-config = tf.ConfigProto()
-config.gpu_options.per_process_gpu_memory_fraction = 0.33
-
-with tf.Session("grpc://localhost:2222", config=config) as sess:
-	print(c.eval())
-
-with tf.Session("grpc://localhost:2223", config=config) as sess:
-	print(c.eval())
-
-with tf.Session("grpc://localhost:2224", config=config) as sess:
+with tf.Session("grpc://" + args.server_host) as sess:
 	print(c.eval())
