@@ -2,3 +2,4 @@ env/
 checkpoints/
 .ipynb_checkpoints/
 tf_logs/
+inception_v3/

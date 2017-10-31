@@ -1,0 +1,3 @@
+model one validation performance: 98.18%
+model two validation performance: 97.78%
+model three validation performance: 97.62%
